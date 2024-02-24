@@ -1,6 +1,6 @@
 {
   "name": "ogallagher-i18n",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Internationalisation library for JS projects. Fork of roddeh-i18n.",
   "main": "dist/i18n.js",
   "typings": "./typings/index.d.ts",
