@@ -18,6 +18,32 @@ declare module "roddeh-i18n" {
 }
 ```
 
+## `ogallagher-i18n` features
+
+### Support promises as extension method returns
+
+Both of the following patterns should work as of version `1.2.3`:
+
+```javascript
+const i18n = require('i18n')
+
+const en = i18n.create({values: {
+  '%n is even': {
+    'even': 'yes, %n is even',
+    'odd': 'no, %n is not even'
+  }
+}})
+
+// existing pattern, extension as plain function
+en.extend((text, num, formatting, data) => data[num % 2 === 0 ? 'even' : 'odd'])
+console.log(en('%n is even', 2)) // yes, 2 is even
+
+// new pattern, extension as simple promise
+en.extend((text, num, formatting, data) => new Promise((res) => {
+  res(data[num % 2 === 0 ? 'even' : 'odd'])
+}))
+en('%n is even', 2).then(console.log) // yes, 2 is even
+```
 
 ## Contributing
 

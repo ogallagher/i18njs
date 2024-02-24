@@ -150,7 +150,7 @@
       };
 
       Translator.prototype.findTranslation = function(text, num, formatting, data, defaultText) {
-        var a, b, c, d, e, i, len, result, triple, value;
+        var a, b, c, d, e, i, len, result, self, triple, value;
         value = data[text];
         if (value == null) {
           return null;
@@ -158,8 +158,17 @@
         if (typeof value === "object" && !Array.isArray(value)) {
           if (this.extension && typeof this.extension === "function") {
             value = this.extension(text, num, formatting, value);
-            value = this.applyNumbers(value, num);
-            return this.applyFormatting(value, num, formatting);
+            if (value instanceof Promise) {
+              self = this;
+              return value.then(function(v) {
+                return self.applyNumbers(v, num);
+              }).then(function(v) {
+                return self.applyFormatting(v, num, formatting);
+              });
+            } else {
+              value = this.applyNumbers(value, num);
+              return this.applyFormatting(value, num, formatting);
+            }
           } else {
             return this.useOriginalText(defaultText || text, num, formatting);
           }

@@ -124,7 +124,7 @@
 
 
     #
-    # Translates all the keys in a hash.  Useful for translating the i18n propety that exists for some lovely.io packages.
+    # Translates all the keys in a hash.  Useful for translating the i18n property that exists for some lovely.io packages.
     # @param {Object} Hash containing the strings to be translated
     # @param {Object} Context to be used when translating the hash values
     #
@@ -156,8 +156,13 @@
         # We are using an extension to translate.
         if @extension and typeof @extension is "function"
           value = @extension(text, num, formatting, value)
-          value = @applyNumbers(value, num)
-          return @applyFormatting(value, num, formatting)
+          if value instanceof Promise
+            self = @
+            return value.then((v) -> self.applyNumbers(v, num))
+            .then((v) -> self.applyFormatting(v, num, formatting))
+          else
+            value = @applyNumbers(value, num)
+            return @applyFormatting(value, num, formatting)
         else
           return @useOriginalText(defaultText or text, num, formatting)
       

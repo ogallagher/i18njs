@@ -75,7 +75,7 @@ describe('roddeh-i18n', function() {
   });
 
   describe('Test extensions', function() {
-    before(function() {
+    it('Uses extension in English instance', function() {
       instance.en.extend(function(_text, num, _formatting, data) {
         if (num === 3) {
           return data['three']
@@ -84,10 +84,31 @@ describe('roddeh-i18n', function() {
           return data['default']
         }
       })
+
+      expect(instance.en('extended %n', 3)).to.be.equal('3 is three!')
     })
 
-    it('Uses extension in English instance', function() {
-      expect(instance.en('extended %n', 3)).to.be.equal('3 is three!')
+    it('Handles promise extension in English instance', function() {
+      instance.en.extend((_text, num, _formatting, data) => {
+        return new Promise((res) => {
+          if (num === 3) {
+            res(data['three'])
+          }
+          else {
+            res(data['default'])
+          }
+        })
+      })
+
+      instance.en('extended %n', 3)
+      .then((v) => {
+        expect(v).to.be.equal('3 is three!')
+      })
+      
+      instance.en('extended %n', 2)
+      .then((v) => {
+        expect(v).to.be.equal('2 is not three')
+      })
     })
   })
 
